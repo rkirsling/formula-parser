@@ -173,14 +173,14 @@ var FormulaParser = (function () {
 
   /**
    * A parser class for "operator-precedence languages", i.e.,
-   * context-free languages which only have variables, unary operators, and binary operators.
+   * context-free languages which have only variables, unary operators, and binary operators.
    *
    * The grammar for a parser instance is thus wholly specified by the operator definitions
    * (as well as a key with which to label variable nodes).
    *
    * An operator definition is an object like the following:
    *   { symbol: '+', key: 'plus', precedence: 1, associativity: 'left' }
-   * It specifies a symbol, a key for the operator's AST node,
+   * It specifies a symbol, a key for its AST node,
    * a precedence level, and (for binaries) an associativity direction.
    *
    * @constructor

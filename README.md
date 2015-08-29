@@ -8,14 +8,14 @@ The algorithm is a fully-immutable JavaScript adaptation of
 
 ## Usage
 
-**FormulaParser** is a parser class for _operator-precedence languages_, i.e.,
+`FormulaParser` is a parser class for _operator-precedence languages_, i.e.,
 [context-free languages](https://en.wikipedia.org/wiki/Context-free_grammar) which
 have only variables, unary operators, and binary operators.
 
 This restriction means that the grammar for a parser instance is wholly specified by
 the operator definitions (and a key with which to label variable nodes).
 
-As the [ArithmeticParser](examples/arithmeticParser.js) example demonstrates,
+As the [`ArithmeticParser`](examples/arithmeticParser.js) example demonstrates,
 an _operator definition_ is an object like the following:
 ```js
 { symbol: '+', key: 'plus', precedence: 1, associativity: 'left' }

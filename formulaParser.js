@@ -1,5 +1,5 @@
 /**
- * formula-parser v1.0.0
+ * formula-parser v1.0.1
  * (http://github.com/rkirsling/formula-parser)
  *
  * Copyright (c) 2015 Ross Kirsling

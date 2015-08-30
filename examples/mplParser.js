@@ -1,3 +1,5 @@
+var FormulaParser = require('formula-parser');
+
 // Modal Propositional Logic //
 
 var variableKey = 'prop';

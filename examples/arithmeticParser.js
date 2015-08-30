@@ -1,3 +1,5 @@
+var FormulaParser = require('formula-parser');
+
 // Arithmetic //
 
 var variableKey = 'var';

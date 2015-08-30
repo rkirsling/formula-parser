@@ -17,8 +17,13 @@ module.exports = function (grunt) {
         jshintrc: '.jshintrc'
       }
     },
+    pkg: grunt.file.readJSON('package.json'),
     uglify: {
-      'dist/formula-parser.min.js': 'dist/formula-parser.js'
+      'dist/formula-parser.min.js': 'dist/formula-parser.js',
+      options: {
+        banner: '/*! <%= pkg.name %> v<%= pkg.version %> ' +
+                'by <%= pkg.author %> (<%= pkg.license %> license) */\n'
+      }
     }
   });
 

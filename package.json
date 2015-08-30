@@ -1,6 +1,6 @@
 {
   "name": "formula-parser",
-  "description": "A parser for \"operator-precedence languages\" such as arithmetic and propositional logic.",
+  "description": "A parser class for operator-precedence languages.",
   "version": "1.0.0",
   "author": "Ross Kirsling",
   "license": "MIT",

@@ -1,6 +1,6 @@
 var FormulaParser = require('formula-parser');
 
-// Arithmetic //
+// parser for algebraic formulae //
 
 var variableKey = 'var';
 
@@ -17,4 +17,4 @@ var binaries = [
   { symbol: '=', key: 'eq',   precedence: 0, associativity: 'left'  }
 ];
 
-var ArithmeticParser = new FormulaParser(variableKey, unaries, binaries);
+var AlgebraParser = new FormulaParser(variableKey, unaries, binaries);

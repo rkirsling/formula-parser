@@ -1,5 +1,5 @@
 /**
- * formula-parser v1.0.1
+ * formula-parser v1.0.2
  * (http://github.com/rkirsling/formula-parser)
  *
  * Copyright (c) 2015 Ross Kirsling
@@ -134,7 +134,7 @@ function _parseBinarySubformula(self, str, currentPrecedence, leftOperandJSON) {
 }
 
 /**
- * Recursively parses a formula according to this parser's configuration.
+ * Recursively parses a formula according to this parser's parameters.
  * Returns an complete AST and a (hopefully empty) string remainder.
  *
  * @private
@@ -196,7 +196,7 @@ function FormulaParser(variableKey, unaries, binaries) {
 }
 
 /**
- * Parses a formula according to this parser's configuration.
+ * Parses a formula according to this parser's parameters.
  * Returns an AST in JSON format.
  *
  * @public

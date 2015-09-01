@@ -75,13 +75,18 @@ AlgebraParser.parse('(a + b * c) ^ -d');
 
 ### Constants
 
-Technically, constants aren't supported&mdash;the leaves of the formula are all treated as variables, the values of which are to be evaluated at some post-parse stage.
+Technically, constants aren't supported&mdash;the leaves of the formula are all treated as variables,
+the values of which are to be evaluated at some post-parse stage.
 
-That said, since a "variable" for present purposes is any alphanumeric string (including underscores), `'true'`, `'PI'`, and even `'3'` will all be happily parsed as such. (_Of course, numbers in decimal notation will fail._)
+That said, since a "variable" for present purposes is any alphanumeric string (including underscores),
+`'true'`, `'PI'`, and even `'3'` will all be happily parsed as such.
+(_Of course, numbers in decimal notation will fail._)
 
 ### Function symbols
 
-Function symbols aren't explicitly supported either, but they can be simulated by operator symbols. Specifying `sin` as a unary symbol will accept `sin x` or `sin(x)`, while specifying `mod` as a binary symbol will accept `x mod y`.
+Function symbols aren't explicitly supported either, but they can be simulated by operator symbols.
+Specifying `sin` as a unary symbol will accept `sin x` or `sin(x)`,
+while specifying `mod` as a binary symbol will accept `x mod y`.
 
 ### Operator position
 

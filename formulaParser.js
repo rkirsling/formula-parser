@@ -152,7 +152,7 @@ function _parseFormula(self, currentString, currentPrecedence, currentJSON) {
   // First, we need an initial subformula.
   // A valid formula can't start with a binary operator, but anything else is possible.
   var parsedHead =
-    currentJSON ? { json: currentJSON, remainder: currentString} :
+    currentJSON ? { json: currentJSON, remainder: currentString } :
       _parseUnarySubformula(self, currentString) ||
       _parseParenthesizedSubformula(self, currentString) ||
       _parseVariable(self, currentString);

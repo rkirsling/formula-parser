@@ -5,7 +5,7 @@ var FormulaParser = require('formula-parser');
 var variableKey = 'prop';
 
 var unaries = [
-  { symbol: '~',  key: 'not',  precedence: 4 },
+  { symbol: '~',  key: 'neg',  precedence: 4 },
   { symbol: '[]', key: 'nec',  precedence: 4 },
   { symbol: '<>', key: 'poss', precedence: 4 }
 ];

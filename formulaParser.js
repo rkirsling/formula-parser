@@ -141,7 +141,7 @@ function _parseBinarySubformula(self, str, currentPrecedence, leftOperandJSON) {
  * @param {Object} self              - a FormulaParser instance
  * @param {string} currentString     - remainder of input string left to parse
  * @param {number} currentPrecedence - lowest binary precedence allowable at current parse stage
- * @param [Object] currentJSON       - AST node retained from previous parse stage
+ * @param {Object} [currentJSON]     - AST node retained from previous parse stage
  * @returns {Object}
  */
 function _parseFormula(self, currentString, currentPrecedence, currentJSON) {

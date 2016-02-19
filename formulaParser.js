@@ -26,7 +26,7 @@ function sliceSymbol(str, symbol) {
 
 /**
  * Attempts to match a given list of operators against the head of a given string.
- * Returns the first match if successful, otherwise null.
+ * Returns the match having the longest symbol if successful, otherwise null.
  *
  * @private
  * @param {string}   str          - a string to match against
@@ -34,9 +34,10 @@ function sliceSymbol(str, symbol) {
  * @returns {?Object}
  */
 function matchOperator(str, operatorList) {
-  return operatorList.reduce(function (match, operator) {
-    return match ? match :
-      str.indexOf(operator.symbol) === 0 ? operator : null;
+  return operatorList.reduce(function (longestMatch, operator) {
+    return str.indexOf(operator.symbol) === 0 &&
+      (!longestMatch || operator.symbol.length > longestMatch.symbol.length) ?
+      operator : longestMatch;
   }, null);
 }
 

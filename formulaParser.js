@@ -26,7 +26,7 @@ function sliceSymbol(str, symbol) {
 
 /**
  * Attempts to match a given list of operators against the head of a given string.
- * Returns the match having the longest symbol if successful, otherwise null.
+ * Returns the longest matching operator if successful, otherwise null.
  *
  * @private
  * @param {string}   str          - a string to match against

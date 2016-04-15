@@ -50,7 +50,7 @@ function matchOperator(str, operatorList) {
  * @returns {?Object}
  */
 function _parseVariable(self, str) {
-  var variable = (str.match(/^[^\s\(\)]+/) || [])[0];
+  var variable = (str.match(/^[^\s\(\),]+/) || [])[0];
   if (!variable) {
     return null;
   }

@@ -50,7 +50,19 @@ function matchOperator(str, operatorList) {
  * @returns {?Object}
  */
 function _parseVariable(self, str) {
-  var variable = (str.match(/^[^\s\(\),]+/) || [])[0];
+  var variable = '';
+  var strClone = str;
+  while (strClone) {
+    if (
+      strClone[0].match(/[\s\(\)]/) ||
+      matchOperator(strClone, self.unaries) ||
+      matchOperator(strClone, self.binaries)
+    ) {
+      break;
+    }
+    variable += strClone[0];
+    strClone = strClone.slice(1);
+  }
   if (!variable) {
     return null;
   }

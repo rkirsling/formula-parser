@@ -1,12 +1,3 @@
-/**
- * formula-parser v1.0.4
- * (http://github.com/rkirsling/formula-parser)
- *
- * Copyright (c) 2015 Ross Kirsling
- * Released under the MIT License.
- */
-'use strict';
-
 var MIN_PRECEDENCE = 0;
 
 /**
@@ -217,4 +208,4 @@ FormulaParser.prototype.parse = function (input) {
   return parsedFormula.json;
 };
 
-module.exports = FormulaParser;
+export default FormulaParser;

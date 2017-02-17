@@ -15,9 +15,14 @@ The algorithm is a fully-immutable JavaScript adaptation of
 npm install formula-parser
 ```
 
-Node.js:
+ES module:
+```
+import FormulaParser from 'formula-parser';
+```
+
+Node:
 ```js
-var FormulaParser = require('formula-parser');
+const FormulaParser = require('formula-parser');
 ```
 
 Browser:
@@ -38,7 +43,7 @@ by the operator definitions (and a key with which to label variable nodes).
 
 ### Creating a parser instance
 
-As the [`AlgebraParser`](examples/algebraParser.js) example demonstrates,
+As the [`algebraParser`](examples/algebraParser.js) example demonstrates,
 an _operator definition_ is an object like the following:
 ```js
 { symbol: '+', key: 'plus', precedence: 1, associativity: 'left' }
@@ -48,14 +53,14 @@ a `precedence` level, and (for binaries) an `associativity` direction.
 
 Once the definitions are assembled, creating a parser instance is straightforward:
 ```js
-var AlgebraParser = new FormulaParser(variableKey, unaries, binaries);
+const algebraParser = new FormulaParser(variableKey, unaries, binaries);
 ```
 
 ### Parsing
 
 After creating a `FormulaParser` instance, calling its `parse` method will produce an AST for a formula:
 ```js
-AlgebraParser.parse('(a + b * c) ^ -d');
+algebraParser.parse('(a + b * c) ^ -d');
 ```
 →
 ```json

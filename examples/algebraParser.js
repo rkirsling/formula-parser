@@ -1,14 +1,14 @@
-var FormulaParser = require('formula-parser');
+const FormulaParser = require('formula-parser');
 
 // parser for algebraic formulae //
 
-var variableKey = 'var';
+const variableKey = 'var';
 
-var unaries = [
+const unaries = [
   { symbol: '-', key: 'neg', precedence: 4 }
 ];
 
-var binaries = [
+const binaries = [
   { symbol: '^', key: 'exp',  precedence: 3, associativity: 'right' },
   { symbol: '/', key: 'div',  precedence: 2, associativity: 'left'  },
   { symbol: '*', key: 'mult', precedence: 2, associativity: 'left'  },
@@ -17,4 +17,4 @@ var binaries = [
   { symbol: '=', key: 'eq',   precedence: 0, associativity: 'left'  }
 ];
 
-var AlgebraParser = new FormulaParser(variableKey, unaries, binaries);
+const algebraParser = new FormulaParser(variableKey, unaries, binaries);

@@ -1,4 +1,4 @@
-var MIN_PRECEDENCE = 0;
+const MIN_PRECEDENCE = 0;
 
 /**
  * Returns the remainder of a given string after slicing off
@@ -10,8 +10,8 @@ var MIN_PRECEDENCE = 0;
  * @returns {string}
  */
 function sliceSymbol(str, symbol) {
-  var tail = str.slice(symbol.length);
-  var whitespace = tail.match(/^\s*/)[0];
+  const tail = str.slice(symbol.length);
+  const whitespace = tail.match(/^\s*/)[0];
   return tail.slice(whitespace.length);
 }
 
@@ -25,10 +25,10 @@ function sliceSymbol(str, symbol) {
  * @returns {?Object}
  */
 function matchOperator(str, operatorList) {
-  return operatorList.reduce(function (longestMatch, operator) {
-    return str.indexOf(operator.symbol) === 0 &&
+  return operatorList.reduce((longestMatch, operator) => {
+    return str.startsWith(operator.symbol) &&
       (!longestMatch || operator.symbol.length > longestMatch.symbol.length) ?
-      operator : longestMatch;
+        operator : longestMatch;
   }, null);
 }
 
@@ -37,20 +37,20 @@ function matchOperator(str, operatorList) {
  * Returns an AST node and string remainder if successful, otherwise null.
  *
  * @private
- * @param {Object} self - a FormulaParser instance
- * @param {string} str  - a string to parse
+ * @param {FormulaParser} self
+ * @param {string}        str  - a string to parse
  * @returns {?Object}
  */
 function _parseVariable(self, str) {
-  var variable = (str.match(/^\w+/) || [])[0];
+  const variable = (str.match(/^\w+/) || [])[0];
   if (!variable) {
     return null;
   }
 
-  var json = {};
-  json[self.variableKey] = variable;
-
-  return { json: json, remainder: sliceSymbol(str, variable) };
+  return {
+    json: { [self.variableKey]: variable },
+    remainder: sliceSymbol(str, variable)
+  };
 }
 
 /**
@@ -58,8 +58,8 @@ function _parseVariable(self, str) {
  * Returns an AST node and string remainder if successful, otherwise null.
  *
  * @private
- * @param {Object} self - a FormulaParser instance
- * @param {string} str  - a string to parse
+ * @param {FormulaParser} self
+ * @param {string}        str  - a string to parse
  * @returns {?Object}
  */
 function _parseParenthesizedSubformula(self, str) {
@@ -67,12 +67,15 @@ function _parseParenthesizedSubformula(self, str) {
     return null;
   }
 
-  var parsedSubformula = _parseFormula(self, sliceSymbol(str, '('), MIN_PRECEDENCE);
+  const parsedSubformula = _parseFormula(self, sliceSymbol(str, '('), MIN_PRECEDENCE);
   if (parsedSubformula.remainder.charAt(0) !== ')') {
     throw new SyntaxError('Invalid formula! Found unmatched parenthesis.');
   }
 
-  return { json: parsedSubformula.json, remainder: sliceSymbol(parsedSubformula.remainder, ')') };
+  return {
+    json: parsedSubformula.json,
+    remainder: sliceSymbol(parsedSubformula.remainder, ')')
+  };
 }
 
 /**
@@ -80,22 +83,22 @@ function _parseParenthesizedSubformula(self, str) {
  * Returns an AST node and string remainder if successful, otherwise null.
  *
  * @private
- * @param {Object} self - a FormulaParser instance
- * @param {string} str  - a string to parse
+ * @param {FormulaParser} self
+ * @param {string}        str  - a string to parse
  * @returns {?Object}
  */
 function _parseUnarySubformula(self, str) {
-  var unary = matchOperator(str, self.unaries);
+  const unary = matchOperator(str, self.unaries);
   if (!unary) {
     return null;
   }
 
-  var parsedSubformula = _parseFormula(self, sliceSymbol(str, unary.symbol), unary.precedence);
+  const parsedSubformula = _parseFormula(self, sliceSymbol(str, unary.symbol), unary.precedence);
 
-  var json = {};
-  json[unary.key] = parsedSubformula.json;
-
-  return { json: json, remainder: parsedSubformula.remainder };
+  return {
+    json: { [unary.key]: parsedSubformula.json },
+    remainder: parsedSubformula.remainder
+  };
 }
 
 /**
@@ -104,25 +107,25 @@ function _parseUnarySubformula(self, str) {
  * Returns an AST node and string remainder if successful, otherwise null.
  *
  * @private
- * @param {Object} self              - a FormulaParser instance
- * @param {string} str               - a string to parse
- * @param {number} currentPrecedence - lowest binary precedence allowable at current parse stage
- * @param {Object} leftOperandJSON   - AST node for already-parsed left operand
+ * @param {FormulaParser} self
+ * @param {string}        str               - a string to parse
+ * @param {number}        currentPrecedence - lowest binary precedence allowable at current parse stage
+ * @param {Object}        leftOperandJSON   - AST node for already-parsed left operand
  * @returns {?Object}
  */
 function _parseBinarySubformula(self, str, currentPrecedence, leftOperandJSON) {
-  var binary = matchOperator(str, self.binaries);
+  const binary = matchOperator(str, self.binaries);
   if (!binary || binary.precedence < currentPrecedence) {
     return null;
   }
 
-  var nextPrecedence = binary.precedence + (binary.associativity === 'left' ? 1 : 0);
-  var parsedRightOperand = _parseFormula(self, sliceSymbol(str, binary.symbol), nextPrecedence);
+  const nextPrecedence = binary.precedence + (binary.associativity === 'left' ? 1 : 0);
+  const parsedRightOperand = _parseFormula(self, sliceSymbol(str, binary.symbol), nextPrecedence);
 
-  var json = {};
-  json[binary.key] = [leftOperandJSON, parsedRightOperand.json];
-
-  return { json: json, remainder: parsedRightOperand.remainder };
+  return {
+    json: { [binary.key]: [leftOperandJSON, parsedRightOperand.json] },
+    remainder: parsedRightOperand.remainder
+  };
 }
 
 /**
@@ -130,10 +133,10 @@ function _parseBinarySubformula(self, str, currentPrecedence, leftOperandJSON) {
  * Returns an complete AST and a (hopefully empty) string remainder.
  *
  * @private
- * @param {Object} self              - a FormulaParser instance
- * @param {string} currentString     - remainder of input string left to parse
- * @param {number} currentPrecedence - lowest binary precedence allowable at current parse stage
- * @param {Object} [currentJSON]     - AST node retained from previous parse stage
+ * @param {FormulaParser} self
+ * @param {string}        currentString     - remainder of input string left to parse
+ * @param {number}        currentPrecedence - lowest binary precedence allowable at current parse stage
+ * @param {Object}        [currentJSON]     - AST node retained from previous parse stage
  * @returns {Object}
  */
 function _parseFormula(self, currentString, currentPrecedence, currentJSON) {
@@ -143,7 +146,7 @@ function _parseFormula(self, currentString, currentPrecedence, currentJSON) {
 
   // First, we need an initial subformula.
   // A valid formula can't start with a binary operator, but anything else is possible.
-  var parsedHead =
+  const parsedHead =
     currentJSON ? { json: currentJSON, remainder: currentString } :
       _parseUnarySubformula(self, currentString) ||
       _parseParenthesizedSubformula(self, currentString) ||
@@ -154,7 +157,7 @@ function _parseFormula(self, currentString, currentPrecedence, currentJSON) {
   }
 
   // Having found an initial subformula, let's see if it's the left operand to a binary operator...
-  var parsedBinary = _parseBinarySubformula(self, parsedHead.remainder, currentPrecedence, parsedHead.json);
+  const parsedBinary = _parseBinarySubformula(self, parsedHead.remainder, currentPrecedence, parsedHead.json);
   if (!parsedBinary) {
     // ...if it isn't, we're done!
     return parsedHead;
@@ -175,37 +178,36 @@ function _parseFormula(self, currentString, currentPrecedence, currentJSON) {
  *   { symbol: '+', key: 'plus', precedence: 1, associativity: 'left' }
  * It specifies a symbol, a key for its AST node,
  * a precedence level, and (for binaries) an associativity direction.
- *
- * @constructor
- * @param {string}   variableKey - key to use for a variable's AST node
- * @param {Object[]} unaries     - an array of unary operator definitions
- * @param {Object[]} binaries    - an array of binary operator definitions
  */
-function FormulaParser(variableKey, unaries, binaries) {
-  this.variableKey = variableKey || 'var';
-  this.unaries     = unaries     || [];
-  this.binaries    = binaries    || [];
+class FormulaParser {
+  /**
+   * @param {string}   variableKey - key to use for a variable's AST node
+   * @param {Object[]} unaries     - an array of unary operator definitions
+   * @param {Object[]} binaries    - an array of binary operator definitions
+   */
+  constructor(variableKey = 'var', unaries = [], binaries = []) {
+    Object.assign(this, { variableKey, unaries, binaries });
+  }
+
+  /**
+   * Parses a formula according to this parser's parameters.
+   * Returns an AST in JSON format.
+   *
+   * @param {string} input - a formula to parse
+   * @returns {Object}
+   */
+  parse(input) {
+    if (typeof input !== 'string') {
+      throw new SyntaxError('Invalid formula! Found non-string input.');
+    }
+
+    const parsedFormula = _parseFormula(this, input.trim(), MIN_PRECEDENCE);
+    if (parsedFormula.remainder.length) {
+      throw new SyntaxError('Invalid formula! Unexpected continuation of input.');
+    }
+
+    return parsedFormula.json;
+  }
 }
-
-/**
- * Parses a formula according to this parser's parameters.
- * Returns an AST in JSON format.
- *
- * @public
- * @param {string} input - a formula to parse
- * @returns {Object}
- */
-FormulaParser.prototype.parse = function (input) {
-  if (typeof input !== 'string') {
-    throw new SyntaxError('Invalid formula! Found non-string input.');
-  }
-
-  var parsedFormula = _parseFormula(this, input.trim(), MIN_PRECEDENCE);
-  if (parsedFormula.remainder.length) {
-    throw new SyntaxError('Invalid formula! Unexpected continuation of input.');
-  }
-
-  return parsedFormula.json;
-};
 
 export default FormulaParser;

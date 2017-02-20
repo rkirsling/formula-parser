@@ -3,8 +3,10 @@ const MIN_PRECEDENCE = 0;
 /**
  * Returns the remainder of a given string after slicing off
  * the length of a given symbol and any following whitespace.
+ * (Does not verify that the symbol is an initial substring.)
  *
  * @private
+ * @static
  * @param {string} str    - a string to slice
  * @param {string} symbol - an initial substring
  * @returns {string}
@@ -20,6 +22,7 @@ function sliceSymbol(str, symbol) {
  * Returns the longest matching operator if successful, otherwise null.
  *
  * @private
+ * @static
  * @param {string}   str          - a string to match against
  * @param {Object[]} operatorList - an array of operator definitions
  * @returns {?Object}
@@ -33,23 +36,23 @@ function matchOperator(str, operatorList) {
 }
 
 /**
- * Attempts to parse a variable at the head of a given string.
+ * Attempts to parse a variable (i.e., any alphanumeric substring) at the head of a given string.
  * Returns an AST node and string remainder if successful, otherwise null.
  *
  * @private
  * @param {FormulaParser} self
- * @param {string}        str  - a string to parse
+ * @param {string}        currentString - remainder of input string left to parse
  * @returns {?Object}
  */
-function _parseVariable(self, str) {
-  const variable = (str.match(/^\w+/) || [])[0];
+function _parseVariable(self, currentString) {
+  const variable = (currentString.match(/^\w+/) || [])[0];
   if (!variable) {
     return null;
   }
 
   return {
     json: { [self.variableKey]: variable },
-    remainder: sliceSymbol(str, variable)
+    remainder: sliceSymbol(currentString, variable)
   };
 }
 
@@ -59,15 +62,15 @@ function _parseVariable(self, str) {
  *
  * @private
  * @param {FormulaParser} self
- * @param {string}        str  - a string to parse
+ * @param {string}        currentString - remainder of input string left to parse
  * @returns {?Object}
  */
-function _parseParenthesizedSubformula(self, str) {
-  if (str.charAt(0) !== '(') {
+function _parseParenthesizedSubformula(self, currentString) {
+  if (currentString.charAt(0) !== '(') {
     return null;
   }
 
-  const parsedSubformula = _parseFormula(self, sliceSymbol(str, '('), MIN_PRECEDENCE);
+  const parsedSubformula = _parseFormula(self, sliceSymbol(currentString, '('), MIN_PRECEDENCE);
   if (parsedSubformula.remainder.charAt(0) !== ')') {
     throw new SyntaxError('Invalid formula! Found unmatched parenthesis.');
   }
@@ -84,16 +87,16 @@ function _parseParenthesizedSubformula(self, str) {
  *
  * @private
  * @param {FormulaParser} self
- * @param {string}        str  - a string to parse
+ * @param {string}        currentString - remainder of input string left to parse
  * @returns {?Object}
  */
-function _parseUnarySubformula(self, str) {
-  const unary = matchOperator(str, self.unaries);
+function _parseUnarySubformula(self, currentString) {
+  const unary = matchOperator(currentString, self.unaries);
   if (!unary) {
     return null;
   }
 
-  const parsedSubformula = _parseFormula(self, sliceSymbol(str, unary.symbol), unary.precedence);
+  const parsedSubformula = _parseFormula(self, sliceSymbol(currentString, unary.symbol), unary.precedence);
 
   return {
     json: { [unary.key]: parsedSubformula.json },
@@ -108,19 +111,19 @@ function _parseUnarySubformula(self, str) {
  *
  * @private
  * @param {FormulaParser} self
- * @param {string}        str               - a string to parse
+ * @param {string}        currentString     - remainder of input string left to parse
  * @param {number}        currentPrecedence - lowest binary precedence allowable at current parse stage
  * @param {Object}        leftOperandJSON   - AST node for already-parsed left operand
  * @returns {?Object}
  */
-function _parseBinarySubformula(self, str, currentPrecedence, leftOperandJSON) {
-  const binary = matchOperator(str, self.binaries);
+function _parseBinarySubformula(self, currentString, currentPrecedence, leftOperandJSON) {
+  const binary = matchOperator(currentString, self.binaries);
   if (!binary || binary.precedence < currentPrecedence) {
     return null;
   }
 
   const nextPrecedence = binary.precedence + (binary.associativity === 'left' ? 1 : 0);
-  const parsedRightOperand = _parseFormula(self, sliceSymbol(str, binary.symbol), nextPrecedence);
+  const parsedRightOperand = _parseFormula(self, sliceSymbol(currentString, binary.symbol), nextPrecedence);
 
   return {
     json: { [binary.key]: [leftOperandJSON, parsedRightOperand.json] },
@@ -176,8 +179,8 @@ function _parseFormula(self, currentString, currentPrecedence, currentJSON) {
  *
  * An operator definition is an object like the following:
  *   { symbol: '+', key: 'plus', precedence: 1, associativity: 'left' }
- * It specifies a symbol, a key for its AST node,
- * a precedence level, and (for binaries) an associativity direction.
+ * It specifies a symbol, a key for its AST node, a precedence level,
+ * and (for binaries) an associativity direction.
  */
 class FormulaParser {
   /**

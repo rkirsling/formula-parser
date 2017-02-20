@@ -12,9 +12,7 @@ const MIN_PRECEDENCE = 0;
  * @returns {string}
  */
 function sliceSymbol(str, symbol) {
-  const tail = str.slice(symbol.length);
-  const whitespace = tail.match(/^\s*/)[0];
-  return tail.slice(whitespace.length);
+  return str.slice(symbol.length).trim();
 }
 
 /**
@@ -122,7 +120,7 @@ function _parseBinarySubformula(self, currentString, currentPrecedence, leftOper
     return null;
   }
 
-  const nextPrecedence = binary.precedence + (binary.associativity === 'left' ? 1 : 0);
+  const nextPrecedence = binary.precedence + (binary.associativity === 'left');
   const parsedRightOperand = _parseFormula(self, sliceSymbol(currentString, binary.symbol), nextPrecedence);
 
   return {

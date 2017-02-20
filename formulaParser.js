@@ -17,19 +17,18 @@ function sliceSymbol(str, symbol) {
 
 /**
  * Attempts to match a given list of operators against the head of a given string.
- * Returns the longest matching operator if successful, otherwise null.
+ * Returns the first match if successful, otherwise null.
  *
  * @private
  * @static
  * @param {string}   str          - a string to match against
- * @param {Object[]} operatorList - an array of operator definitions
+ * @param {Object[]} operatorList - an array of operator definitions, sorted by longest symbol
  * @returns {?Object}
  */
 function matchOperator(str, operatorList) {
-  return operatorList.reduce((longestMatch, operator) => {
-    return str.startsWith(operator.symbol) &&
-      (!longestMatch || operator.symbol.length > longestMatch.symbol.length) ?
-        operator : longestMatch;
+  return operatorList.reduce((match, operator) => {
+    return match ||
+      (str.startsWith(operator.symbol) ? operator : null);
   }, null);
 }
 
@@ -187,7 +186,13 @@ class FormulaParser {
    * @param {Object[]} binaries    - an array of binary operator definitions
    */
   constructor(variableKey = 'var', unaries = [], binaries = []) {
-    Object.assign(this, { variableKey, unaries, binaries });
+    const byLongestSymbol = (x, y) => y.symbol.length - x.symbol.length;
+
+    Object.assign(this, {
+      variableKey,
+      unaries: unaries.slice().sort(byLongestSymbol),
+      binaries: binaries.slice().sort(byLongestSymbol)
+    });
   }
 
   /**

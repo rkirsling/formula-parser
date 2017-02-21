@@ -11,12 +11,12 @@ The algorithm is a fully-immutable JavaScript adaptation of
 
 ## Install
 
-```
+```sh
 npm install formula-parser
 ```
 
 ES module:
-```
+```js
 import FormulaParser from 'formula-parser';
 ```
 

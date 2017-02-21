@@ -51,7 +51,7 @@ function matchOperator(str, operatorList) {
  * @returns {?Object}
  */
 function _parseVariable(self, str) {
-  var variable = (str.match(/^\w+/) || [])[0];
+  var variable = (str.match(self.variableRegexp) || [])[0];
   if (!variable) {
     return null;
   }
@@ -190,10 +190,11 @@ function _parseFormula(self, currentString, currentPrecedence, currentJSON) {
  * @param {Object[]} unaries     - an array of unary operator definitions
  * @param {Object[]} binaries    - an array of binary operator definitions
  */
-function FormulaParser(variableKey, unaries, binaries) {
-  this.variableKey = variableKey || 'var';
-  this.unaries     = unaries     || [];
-  this.binaries    = binaries    || [];
+function FormulaParser(variableKey, unaries, binaries, variableRegexp) {
+  this.variableKey    = variableKey || 'var';
+  this.unaries        = unaries     || [];
+  this.binaries       = binaries    || [];
+  this.variableRegexp = variableRegexp || /^\w+/;
 }
 
 /**

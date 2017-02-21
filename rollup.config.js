@@ -12,7 +12,7 @@ export default {
       moduleName: 'FormulaParser'
     },
     {
-      dest: 'dist/formula-parser.es6.js',
+      dest: 'dist/formula-parser.es.js',
       format: 'es'
     }
   ]
